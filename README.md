@@ -8,7 +8,7 @@ and our forwarder script.
 
 The first MQTT broker is an external broker.
 Smart devices connected to it.
-Smart devices use message topics like "DeviceID/field" that is useful for devices but not useful for automation scenarios.
+They use message topics like "DeviceID/field" that is useful for devices but not useful for automation scenarios.
 
 The second one is an internal broker.
 Automation scenarios and other subsystems connected to it.
