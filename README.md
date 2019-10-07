@@ -46,3 +46,7 @@ To start IoTGateway, each line bellow should be started in different terminals:
 To imitate an event that the door has just been opened, you can use the following command:
 
     mosquitto_pub -h "localhost" -p 1024 -t "0000000001/state" -m "opened"
+    
+After that, this event will be passed through IoTGateway to scenario.py, that will send a command to turn on the kettle.
+This command will be passed through IoTGateway back to kettle.py, that will turn off itself and notify others.
+In the terminal, where door.py started, a delay between the door opened event and the kettle turned off event will be showed.
