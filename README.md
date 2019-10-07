@@ -19,7 +19,7 @@ For example,
             kitchen.kettle.status = "on"
 
 Our forwarder substitutes message topics from one format to another format when messages pass from external devices to internal subsystems and vice versa.
-If your door or kettle breaks, we will buy new device (it will have another DeviceID) and just replace it and update topic mappings in our forwarder.
+If your door or kettle breaks, you will buy new device (it will have another DeviceID) and just replace it and update topic mappings in our forwarder.
 
 Installation
 ------------
