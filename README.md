@@ -1,6 +1,27 @@
 # IoTGateway
 
-INSTALLATION
+Description
+-----------
+
+A smart kettle and a smart door connected to our IoT Gateway consisting of two MQTT brokers (i.e. Mosquitto)
+and our forwarder script.
+
+The first MQTT broker is an external broker.
+Smart devices connected to it.
+Smart devices use message topics like "DeviceID/field" that is useful for devices but not useful for automation scenarios.
+
+The second one is an internal broker.
+Automation scenarios and other subsystems connected to it.
+They use message topics like "kitchen/kettle/status" or "kitchen/door/status".
+For example,
+
+        if kitchen.door.status == "opened" then
+            kitchen.kettle.status = "on"
+
+Our forwarder substitutes message topics from one format to another format when messages pass from external devices to internal subsystems and vice versa.
+If your door or kettle breaks, we will buy new device (it will have another DeviceID) and just replace it and update topic mappings in our forwarder.
+
+Installation
 ------------
 
     sudo apt-get update
@@ -9,7 +30,7 @@ INSTALLATION
     sudo systemctl disable mosquitto
 
 
-QUICK START
+Quick start
 -----------
 
 To start IoTGateway, each line bellow should be started in different terminals:
