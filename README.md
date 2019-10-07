@@ -28,6 +28,7 @@ Installation
     sudo apt-get install mosquitto mosquitto-clients
     sudo systemctl stop mosquitto
     sudo systemctl disable mosquitto
+    pip install paho-mqtt
 
 
 Quick start
