@@ -1,4 +1,5 @@
 import paho.mqtt.client as mqtt
+from config import INTERNAL_MQTT_BROKER
 
 def on_connect(client, userdata, flags, rc):
     print('Connected with result code {}'.format(rc))
@@ -22,6 +23,6 @@ client = mqtt.Client();
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect('localhost', 1025, 60)
+client.connect(INTERNAL_MQTT_BROKER['host'], INTERNAL_MQTT_BROKER['port'], 60)
 
 client.loop_forever()

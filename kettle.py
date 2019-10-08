@@ -1,5 +1,6 @@
 import paho.mqtt.client as mqtt
 import time
+from config import EXTERNAL_MQTT_BROKER
 
 ID_KETTLE_DEVICE = '0000000002'
 KETTLE_STATE = '{}/state'.format(ID_KETTLE_DEVICE)
@@ -27,6 +28,6 @@ client = mqtt.Client();
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect('localhost', 1024, 60)
+client.connect(EXTERNAL_MQTT_BROKER['host'], EXTERNAL_MQTT_BROKER['port'], 60)
 
 client.loop_forever()
