@@ -49,4 +49,4 @@ To imitate an event that the door has just been opened, you can use the followin
     
 After that, this event will be passed through IoTGateway to scenario.py, that will send a command to turn on the kettle.
 This command will be passed through IoTGateway back to kettle.py, that will turn off itself and notify others.
-In the terminal, where door.py started, a delay between the door opened event and the kettle turned off event will be showed.
+In the terminal, where door.py started, a delay between the door opened event and the kettle turned off event will be shown.
