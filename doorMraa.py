@@ -1,38 +1,35 @@
 import paho.mqtt.client as mqtt
-import time
-from config import EXTERNAL_MQTT_BROKER
+import mraa
 
-ID_DOOR_DEVICE = '0000000001'
-DOOR_STATE = '0000000001/state'.format(ID_DOOR_DEVICE)
+HOST = '192.168.1.53'
+PORT = 1024
+TOPIC = '002/state'
+GERKON_PIN = 0
 
-ID_KETTLE_DEVICE = '0000000002'
-KETTLE_STATE = '{}/state'.format(ID_KETTLE_DEVICE)
+GERKON = mraa.Aio(GERKON_PIN)
 
-TS = time.time()
+gerkonLastState = -1;
 
 def on_connect(client, userdata, flags, rc):
     print('Connected with result code {}'.format(rc))
     
-    client.subscribe([(DOOR_STATE, 0), (KETTLE_STATE, 0)])
-    
-def on_message(client, userdata, message):
-    global TS
-    
-    topic = message.topic
-    payload = message.payload.decode('utf8')
-    
-    print('{}: {}'.format(topic, payload))
-    
-    if topic == DOOR_STATE:
-        TS = time.time()
-    elif topic == KETTLE_STATE:
-        if payload == 'off':
-            print('delay = {} sec'.format(time.time() - TS))
-
 client = mqtt.Client();
 client.on_connect = on_connect
-client.on_message = on_message
 
-client.connect(EXTERNAL_MQTT_BROKER['host'], EXTERNAL_MQTT_BROKER['port'], 60)
+client.connect(HOST, PORT, 60)
 
-client.loop_forever()
+while True:
+    v = GERKON.read()
+    if v > 512:
+        v = 1
+    else:
+        v = 0
+    if v != gerkonLastState:
+        gerkonLastState = v
+        if v:
+            client.publish(TOPIC, 'opened')
+            print('opened')
+        else:
+            client.publish(TOPIC, 'closed')
+            print('closed')
+    client.loop(0.1)
