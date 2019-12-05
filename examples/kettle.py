@@ -1,10 +1,8 @@
 import paho.mqtt.client as mqtt
 import time
-from config import EXTERNAL_MQTT_BROKER
 
-ID_DOOR_DEVICE = '0000000001'
-DOOR_STATE = '0000000001/state'.format(ID_DOOR_DEVICE)
-
+HOST = ''
+PORT = 0
 ID_KETTLE_DEVICE = '0000000002'
 KETTLE_STATE = '{}/state'.format(ID_KETTLE_DEVICE)
 
@@ -13,7 +11,7 @@ TS = time.time()
 def on_connect(client, userdata, flags, rc):
     print('Connected with result code {}'.format(rc))
     
-    client.subscribe([(DOOR_STATE, 0), (KETTLE_STATE, 0)])
+    client.subscribe([(KETTLE_STATE, 0)])
     
 def on_message(client, userdata, message):
     global TS
@@ -23,16 +21,14 @@ def on_message(client, userdata, message):
     
     print('{}: {}'.format(topic, payload))
     
-    if topic == DOOR_STATE:
-        TS = time.time()
-    elif topic == KETTLE_STATE:
-        if payload == 'off':
-            print('delay = {} sec'.format(time.time() - TS))
+    if topic == KETTLE_STATE:
+        if payload == 'on':
+            client.publish(KETTLE_STATE, 'off')
 
 client = mqtt.Client();
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect(EXTERNAL_MQTT_BROKER['host'], EXTERNAL_MQTT_BROKER['port'], 60)
+client.connect(HOST, PORT, 60)
 
 client.loop_forever()
