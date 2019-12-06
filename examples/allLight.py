@@ -1,11 +1,8 @@
 import paho.mqtt.client as mqtt
-#import time
-#from config import EXTERNAL_MQTT_BROKER
 
-
+HOST = 'localhost'
+PORT = 20002
 STATE = 'room/allLights'
-
-#TS = time.time()
 
 def on_connect(client, userdata, flags, rc):
     print('Connected with result code {}'.format(rc))
@@ -41,6 +38,6 @@ client = mqtt.Client();
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect('localhost', 20002, 60)
+client.connect(HOST, PORT, 60)
 
 client.loop_forever()
