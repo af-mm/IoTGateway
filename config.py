@@ -1,10 +1,20 @@
 
-EXTERNAL_MQTT_BROKER = {'host' : 'localhost',
-                        'port' : 1024}
-INTERNAL_MQTT_BROKER = {'host' : 'localhost',
-                        'port' : 1025}
-
-MAPPING = {
-    '0000000001/state' : 'kitchen/door/state',
-    '0000000002/state' : 'kitchen/kettle/state'
+CFG = {
+    'EXT_MQTT_BROKER': {
+        'host': 'iotfox.ru',
+        'port': 20002
+    },
+    'INT_MQTT_BROKER': {
+        'host': 'localhost',
+        'port': 1025
+    },
+    'db': {
+        'host': 'iotfox.ru',
+        'port': 20004,
+        'user': 'postgres',
+        'password': '1234',
+        'dbname': 'IoTSystemDB',
+        'table_e2i_mapping': 'device.gw_e2i_mapping',
+        'table_i2e_mapping': 'device.gw_i2e_mapping',
+    }
 }
