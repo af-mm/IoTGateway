@@ -1,9 +1,13 @@
 import paho.mqtt.client as mqtt
 import psycopg2
 from psycopg2.extras import NamedTupleCursor
+import hashlib
 from config import CFG
 
-CACHE_OF_TOPICS = set()
+def getMessageHash(topic, message):
+    return hashlib.md5('{}:{}'.format(topic, message).encode('utf-8')).hexdigest()
+
+CACHE_OF_MESSAGE = set()
 EXTERNAL_CACHE = []
 INTERNAL_CACHE = []
 
@@ -50,13 +54,16 @@ dbConn = psycopg2.connect(  host=CFG['db']['host'],
 dbCursor = dbConn.cursor(cursor_factory=NamedTupleCursor)
 print('Connected to database')
 
+hashString = '{}:{}'
+
 while True:
     if len(EXTERNAL_CACHE):
         for row in EXTERNAL_CACHE:
             topic, payload = row
+            hash = getMessageHash(topic, payload)
             
-            if topic in CACHE_OF_TOPICS:
-                CACHE_OF_TOPICS.remove(topic)
+            if hash in CACHE_OF_MESSAGE:
+                CACHE_OF_MESSAGE.remove(hash)
             else:
                 dbCursor.execute(selectExt2IntMappingQuery, (topic, ))
                 r = dbCursor.fetchall()
@@ -64,7 +71,7 @@ while True:
                 if len(r) == 1:
                     topicTo = r[0].topic_to
                     internalClient.publish(topicTo, payload)
-                    CACHE_OF_TOPICS.add(topicTo)
+                    CACHE_OF_MESSAGE.add(getMessageHash(topicTo, payload))
                     print('E: {}={} -> {}={}'.format(topic, payload, topicTo, payload))
                 else:
                     print('E: {}={} -> X'.format(topic, payload))
@@ -74,9 +81,10 @@ while True:
     if len(INTERNAL_CACHE):
         for row in INTERNAL_CACHE:
             topic, payload = row
+            hash = getMessageHash(topic, payload)
             
-            if topic in CACHE_OF_TOPICS:
-                CACHE_OF_TOPICS.remove(topic)
+            if hash in CACHE_OF_MESSAGE:
+                CACHE_OF_MESSAGE.remove(hash)
             else:
                 dbCursor.execute(selectInt2ExtMappingQuery, (topic, ))
                 r = dbCursor.fetchall()
@@ -84,7 +92,7 @@ while True:
                 if len(r) == 1:
                     topicTo = r[0].topic_to
                     externalClient.publish(topicTo, payload)
-                    CACHE_OF_TOPICS.add(topicTo)
+                    CACHE_OF_MESSAGE.add(getMessageHash(topicTo, payload))
                     print('I: {}={} -> {}={}'.format(topic, payload, topicTo, payload))
                 else:
                     print('I: {}={} -> X'.format(topic, payload))
