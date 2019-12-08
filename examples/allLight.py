@@ -1,8 +1,8 @@
 import paho.mqtt.client as mqtt
 
 HOST = 'localhost'
-PORT = 20002
-STATE = 'room/allLights'
+PORT = 20021
+STATE = '/room/allLights'
 
 def on_connect(client, userdata, flags, rc):
     print('Connected with result code {}'.format(rc))
@@ -20,18 +20,18 @@ def on_message(client, userdata, message):
     if topic == STATE:
         if payload == 'turn on':
             for i in range(4):
-                client.publish('0{}/light'.format(i + 1), 'turn on')
-            client.publish('L01/light1', '100')
-            client.publish('L01/light2', '100')
-            client.publish('cmnd/ss1/POWER', 'on')
-            client.publish('cmnd/ss2/POWER', 'on')
+                client.publish('/room/small_lamp{}'.format(i + 1), 'turn on')
+            client.publish('/room/light1', '100')
+            client.publish('/room/light2', '100')
+            client.publish('/room/ss1', 'on')
+            client.publish('/room/ss2', 'on')
         elif payload == 'turn off':
             for i in range(4):
-                client.publish('0{}/light'.format(i + 1), 'turn off')
-            client.publish('L01/light1', '0')
-            client.publish('L01/light2', '0')
-            client.publish('cmnd/ss1/POWER', 'off')
-            client.publish('cmnd/ss2/POWER', 'off')
+                client.publish('/room/small_lamp{}'.format(i + 1), 'turn off')
+            client.publish('/room/light1', '0')
+            client.publish('/room/light2', '0')
+            client.publish('/room/ss1', 'off')
+            client.publish('/room/ss2', 'off')
 
 
 client = mqtt.Client();
