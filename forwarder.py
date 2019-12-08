@@ -54,8 +54,6 @@ dbConn = psycopg2.connect(  host=CFG['db']['host'],
 dbCursor = dbConn.cursor(cursor_factory=NamedTupleCursor)
 print('Connected to database')
 
-hashString = '{}:{}'
-
 while True:
     if len(EXTERNAL_CACHE):
         for row in EXTERNAL_CACHE:
