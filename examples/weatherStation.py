@@ -17,7 +17,7 @@ i = 0
 while True:
     msg = 'lol_{}'.format(i)
     i = i + 1
-    client.publish(TOPIC, msg)
+    client.publish(TOPIC, 'get')
     client.loop(0.001)
     print(msg)
     time.sleep(30)
