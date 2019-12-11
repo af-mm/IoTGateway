@@ -2,7 +2,9 @@
 CFG = {
     'EXT_MQTT_BROKER': {
         'host': 'localhost',
-	'port': 20002
+        'port': 20002,
+        'login': 'gw',
+        'password': 'b0b3e594420357e78eb8554aebc77231'
     },
     'INT_MQTT_BROKER': {
         'host': 'localhost',

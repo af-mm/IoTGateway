@@ -35,6 +35,7 @@ def on_internal_message(client, userdata, message):
 externalClient = mqtt.Client();
 externalClient.on_connect = on_connect
 externalClient.on_message = on_external_message
+externalClient.username_pw_set(CFG['EXT_MQTT_BROKER']['login'], CFG['EXT_MQTT_BROKER']['password'])
 externalClient.connect(CFG['EXT_MQTT_BROKER']['host'], CFG['EXT_MQTT_BROKER']['port'], 60)
 
 internalClient = mqtt.Client();
