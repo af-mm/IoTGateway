@@ -20,4 +20,4 @@ ENV EMQTT_BROKER_HOST=localhost \
 	DB_E2I_MAPPING_TABLE=gw_e2i_mapping \
 	DB_I2E_MAPPING_TABLE=gw_i2e_mapping
 
-CMD [ "python3", "./forwarder.py" ]
+CMD [ "python3", "-u", "./forwarder.py" ]

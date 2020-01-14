@@ -6,7 +6,7 @@ from config import CFG
 import time
 import signal
 
-time.sleep(5)
+# time.sleep(5)
 
 def getMessageHash(topic, message):
     return hashlib.md5('{}:{}'.format(topic, message).encode('utf-8')).hexdigest()
