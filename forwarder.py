@@ -3,6 +3,10 @@ import psycopg2
 from psycopg2.extras import NamedTupleCursor
 import hashlib
 from config import CFG
+import time
+import signal
+
+time.sleep(5)
 
 def getMessageHash(topic, message):
     return hashlib.md5('{}:{}'.format(topic, message).encode('utf-8')).hexdigest()
@@ -55,51 +59,65 @@ dbConn = psycopg2.connect(  host=CFG['db']['host'],
 dbCursor = dbConn.cursor(cursor_factory=NamedTupleCursor)
 print('Connected to database')
 
-while True:
-    if len(EXTERNAL_CACHE):
-        for row in EXTERNAL_CACHE:
-            topic, payload = row
-            hash = getMessageHash(topic, payload)
-            
-            if hash in CACHE_OF_MESSAGE:
-                CACHE_OF_MESSAGE.remove(hash)
-            else:
-                dbCursor.execute(selectExt2IntMappingQuery, (topic, ))
-                r = dbCursor.fetchall()
-                
-                if len(r) == 1:
-                    topicTo = r[0].topic_to
-                    internalClient.publish(topicTo, payload)
-                    CACHE_OF_MESSAGE.add(getMessageHash(topicTo, payload))
-                    print('E: {}={} -> {}={}'.format(topic, payload, topicTo, payload))
-                else:
-                    print('E: {}={} -> X'.format(topic, payload))
-                    
-        EXTERNAL_CACHE = []
+isItRunning = True
 
-    if len(INTERNAL_CACHE):
-        for row in INTERNAL_CACHE:
-            topic, payload = row
-            hash = getMessageHash(topic, payload)
-            
-            if hash in CACHE_OF_MESSAGE:
-                CACHE_OF_MESSAGE.remove(hash)
-            else:
-                dbCursor.execute(selectInt2ExtMappingQuery, (topic, ))
-                r = dbCursor.fetchall()
+def sigterm_handler(signal, frame):
+    print('SIGTERM caught')
+    
+    global isItRunning
+    isItRunning = False
+    
+signal.signal(signal.SIGTERM, sigterm_handler)
+
+try:
+    while isItRunning:
+        if len(EXTERNAL_CACHE):
+            for row in EXTERNAL_CACHE:
+                topic, payload = row
+                hash = getMessageHash(topic, payload)
                 
-                if len(r) == 1:
-                    topicTo = r[0].topic_to
-                    externalClient.publish(topicTo, payload)
-                    CACHE_OF_MESSAGE.add(getMessageHash(topicTo, payload))
-                    print('I: {}={} -> {}={}'.format(topic, payload, topicTo, payload))
+                if hash in CACHE_OF_MESSAGE:
+                    CACHE_OF_MESSAGE.remove(hash)
                 else:
-                    print('I: {}={} -> X'.format(topic, payload))
-        
-        INTERNAL_CACHE = []
-        
-    externalClient.loop(0.00001)
-    internalClient.loop(0.00001)
+                    dbCursor.execute(selectExt2IntMappingQuery, (topic, ))
+                    r = dbCursor.fetchall()
+                    
+                    if len(r) == 1:
+                        topicTo = r[0].topic_to
+                        internalClient.publish(topicTo, payload)
+                        CACHE_OF_MESSAGE.add(getMessageHash(topicTo, payload))
+                        print('E: {}={} -> {}={}'.format(topic, payload, topicTo, payload))
+                    else:
+                        print('E: {}={} -> X'.format(topic, payload))
+                        
+            EXTERNAL_CACHE = []
+    
+        if len(INTERNAL_CACHE):
+            for row in INTERNAL_CACHE:
+                topic, payload = row
+                hash = getMessageHash(topic, payload)
+                
+                if hash in CACHE_OF_MESSAGE:
+                    CACHE_OF_MESSAGE.remove(hash)
+                else:
+                    dbCursor.execute(selectInt2ExtMappingQuery, (topic, ))
+                    r = dbCursor.fetchall()
+                    
+                    if len(r) == 1:
+                        topicTo = r[0].topic_to
+                        externalClient.publish(topicTo, payload)
+                        CACHE_OF_MESSAGE.add(getMessageHash(topicTo, payload))
+                        print('I: {}={} -> {}={}'.format(topic, payload, topicTo, payload))
+                    else:
+                        print('I: {}={} -> X'.format(topic, payload))
+            
+            INTERNAL_CACHE = []
+            
+        externalClient.loop(0.00001)
+        internalClient.loop(0.00001)
+
+except KeyboardInterrupt:
+    print('KeyboardInterrupt caught')
 
 dbCursor.close()
 dbConn.close()
