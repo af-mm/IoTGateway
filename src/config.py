@@ -4,13 +4,13 @@ CFG = {
     'EXT_MQTT_BROKER': {
         'host': os.getenv('EMQTT_BROKER_HOST', 'localhost'),
         'port': int(os.getenv('EMQTT_BROKER_PORT', 20002)),
-        'login': os.getenv('EMQTT_LOGIN', 'gw'),
+        'login': os.getenv('EMQTT_LOGIN', 'gw_e'),
         'password': os.getenv('EMQTT_PSWD', 'b0b3e594420357e78eb8554aebc77231')
     },
     'INT_MQTT_BROKER': {
         'host': os.getenv('IMQTT_BROKER_HOST', 'localhost'),
         'port': int(os.getenv('IMQTT_BROKER_PORT', 20021)),
-        'login': os.getenv('IMQTT_LOGIN', 'gw'),
+        'login': os.getenv('IMQTT_LOGIN', 'gw_i'),
         'password': os.getenv('IMQTT_PSWD', 'b0b3e594420357e78eb8554aebc77231')
     },
     'db': {
