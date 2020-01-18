@@ -2,7 +2,7 @@ FROM python:3.7
 
 WORKDIR /IoTGateway
 
-COPY config.py forwarder.py requirements.txt ./
+COPY src requirements.txt ./
 
 RUN pip3 install -r requirements.txt
 
@@ -12,6 +12,8 @@ ENV EMQTT_BROKER_HOST=localhost \
 	EMQTT_PSWD=b0b3e594420357e78eb8554aebc77231 \
 	IMQTT_BROKER_HOST=localhost \
 	IMQTT_BROKER_PORT=1025 \
+	IMQTT_LOGIN=gw \
+	IMQTT_PSWD=b0b3e594420357e78eb8554aebc77231 \
 	DB_HOST=localhost \
 	DB_PORT=1026 \
 	DB_USER=postgres \

@@ -2,11 +2,8 @@ import paho.mqtt.client as mqtt
 import psycopg2
 from psycopg2.extras import NamedTupleCursor
 import hashlib
-from config import CFG
-import time
 import signal
-
-# time.sleep(5)
+from config import CFG
 
 def getMessageHash(topic, message):
     return hashlib.md5('{}:{}'.format(topic, message).encode('utf-8')).hexdigest()
@@ -45,6 +42,7 @@ externalClient.connect(CFG['EXT_MQTT_BROKER']['host'], CFG['EXT_MQTT_BROKER']['p
 internalClient = mqtt.Client();
 internalClient.on_connect = on_connect
 internalClient.on_message = on_internal_message
+internalClient.username_pw_set(CFG['INT_MQTT_BROKER']['login'], CFG['INT_MQTT_BROKER']['password'])
 internalClient.connect(CFG['INT_MQTT_BROKER']['host'], CFG['INT_MQTT_BROKER']['port'], 60)
 
 selectQuery = 'SELECT topic_to FROM {} WHERE topic_from=%s'

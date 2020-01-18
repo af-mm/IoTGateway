@@ -1,1 +1,1 @@
-sudo docker build -t afmm/iot_gateway:1.0 .
+docker build -t afmm/iot_gateway:1.0 .

@@ -9,7 +9,9 @@ CFG = {
     },
     'INT_MQTT_BROKER': {
         'host': os.getenv('IMQTT_BROKER_HOST', 'localhost'),
-        'port': int(os.getenv('IMQTT_BROKER_PORT', 20021))
+        'port': int(os.getenv('IMQTT_BROKER_PORT', 20021)),
+        'login': os.getenv('IMQTT_LOGIN', 'gw'),
+        'password': os.getenv('IMQTT_PSWD', 'b0b3e594420357e78eb8554aebc77231')
     },
     'db': {
         'host': os.getenv('DB_HOST', 'localhost'),
